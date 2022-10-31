@@ -6,10 +6,19 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.gibmejob.model.Routes
+import com.example.gibmejob.screens.LoginOptionScreen
+import com.example.gibmejob.screens.LoginScreen
+import com.example.gibmejob.screens.RegisterScreen
+import com.example.gibmejob.screens.SplashScreen
 import com.example.gibmejob.ui.theme.GibMeJobTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    GibMeJobApp()
                 }
             }
         }
@@ -30,14 +39,32 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun GibMeJobApp() {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Routes.SplashScreen
+    ) {
+        composable(Routes.SplashScreen) {
+            SplashScreen(navController)
+        }
+        composable(Routes.LoginOptionScreen) {
+            LoginOptionScreen(navController)
+        }
+        composable(Routes.LoginScreen + "/{type}", listOf(navArgument("type") { type = NavType.StringType })) {
+            val type = it.arguments!!.getString("type")!!
+            LoginScreen(navController = navController, type = type)
+        }
+        composable(Routes.RegisterScreen) {
+            RegisterScreen()
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     GibMeJobTheme {
-        Greeting("Android")
+        GibMeJobApp()
     }
 }
