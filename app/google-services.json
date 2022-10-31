@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "530139917472",
+    "project_id": "gibmejob-c440b",
+    "storage_bucket": "gibmejob-c440b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530139917472:android:8816322d9bbb20f1636dc5",
+        "android_client_info": {
+          "package_name": "com.example.gibmejob"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530139917472-o5ccakcn4b6k63l3i0av49vhu3p0a3ng.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gibmejob",
+            "certificate_hash": "a7907bdc62014e3c2f34014cb0d78f7c05080108"
+          }
+        },
+        {
+          "client_id": "530139917472-adp11c6ai7o5m811pb7l4vnvnertr5bh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSFH0HuZkNl7v6vmNm-PEpBLnsmmlvUUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530139917472-adp11c6ai7o5m811pb7l4vnvnertr5bh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
