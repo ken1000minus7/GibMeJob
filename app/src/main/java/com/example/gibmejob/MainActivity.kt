@@ -15,10 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gibmejob.model.Routes
-import com.example.gibmejob.screens.LoginOptionScreen
-import com.example.gibmejob.screens.LoginScreen
-import com.example.gibmejob.screens.RegisterScreen
-import com.example.gibmejob.screens.SplashScreen
+import com.example.gibmejob.screens.*
 import com.example.gibmejob.ui.theme.GibMeJobTheme
 
 class MainActivity : ComponentActivity() {
@@ -57,6 +54,10 @@ fun GibMeJobApp() {
         }
         composable(Routes.RegisterScreen) {
             RegisterScreen()
+        }
+        
+        composable(Routes.UserScreen) {
+            UserScreen(navController = navController)
         }
     }
 }

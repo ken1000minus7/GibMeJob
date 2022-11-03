@@ -17,14 +17,17 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.gibmejob.model.Routes
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController) {
     val navControllerBackStackEntry = navController.currentBackStackEntryAsState()
+    val auth = FirebaseAuth.getInstance()
     LaunchedEffect(key1 = true) {
         delay(1200)
-        navController.navigate(Routes.LoginOptionScreen) {
+        val route = if(auth.currentUser != null) Routes.UserScreen else Routes.LoginOptionScreen
+        navController.navigate(route) {
             popUpTo(navControllerBackStackEntry.value!!.destination.route!!) {
                 inclusive = true
             }
