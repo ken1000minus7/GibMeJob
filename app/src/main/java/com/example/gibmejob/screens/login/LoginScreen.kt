@@ -1,5 +1,6 @@
-package com.example.gibmejob.screens
+package com.example.gibmejob.screens.login
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -7,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +28,9 @@ fun LoginScreen(navController: NavController, type: String) {
     val password = remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("GibMeJob", Context.MODE_PRIVATE)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize(),

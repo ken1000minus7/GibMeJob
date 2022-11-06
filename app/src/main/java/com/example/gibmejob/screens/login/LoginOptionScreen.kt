@@ -1,4 +1,4 @@
-package com.example.gibmejob.screens
+package com.example.gibmejob.screens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

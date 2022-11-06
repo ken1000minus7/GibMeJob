@@ -1,8 +1,9 @@
-package com.example.gibmejob.screens
+package com.example.gibmejob.screens.user
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,17 +13,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gibmejob.components.UserBottomNavigation
 import com.example.gibmejob.model.Routes
-import com.example.gibmejob.screens.user.SearchJobsScreen
-import com.example.gibmejob.screens.user.UserApplicationsScreen
-import com.example.gibmejob.screens.user.UserProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserScreen(navController: NavController) {
+fun UserScreen(navController: NavController, type: String) {
     val bottomNavController = rememberNavController()
     Scaffold(
         bottomBar = {
-            UserBottomNavigation(navController = bottomNavController)
+            UserBottomNavigation(navController = bottomNavController, type = type)
         }
     ) {
         NavHost(
@@ -39,6 +37,12 @@ fun UserScreen(navController: NavController) {
             composable(Routes.UserProfile) {
                 UserProfileScreen()
             }
+            composable(Routes.CurrentJobs) {
+                Text(text = "jobs")
+            }
+            composable(Routes.CompanyProfile) {
+                Text(text = "profile")
+            }
         }
     }
 }
@@ -46,5 +50,5 @@ fun UserScreen(navController: NavController) {
 @Composable
 @Preview(showBackground = true)
 private fun UserScreenPreview() {
-    UserScreen(rememberNavController())
+    UserScreen(rememberNavController(),"User")
 }
