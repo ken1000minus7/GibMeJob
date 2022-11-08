@@ -45,7 +45,7 @@ class LoginViewModel: ViewModel() {
             name = firebaseUser.displayName ?: "",
             photoUrl = firebaseUser.photoUrl?.toString()
         )
-        db.collection("Company")
+        db.collection("Users")
             .document(company.uid)
             .set(company)
             .addOnCompleteListener(onComplete)

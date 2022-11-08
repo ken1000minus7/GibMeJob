@@ -157,6 +157,9 @@ fun RegisterScreen(navController: NavController) {
                                             inclusive = true
                                         }
                                     }
+                                    sharedPreferences.edit()
+                                        .putString("type",type)
+                                        .apply()
                                 }
                                 if(type == "User") {
                                     loginViewModel.addUser(it.result.user!!, onComplete)

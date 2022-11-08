@@ -33,7 +33,7 @@ class UserViewModel: ViewModel() {
     }
     fun getCompany() {
         viewModelScope.launch {
-            db.collection("Company")
+            db.collection("Users")
                 .document(auth.uid!!)
                 .addSnapshotListener { value, error ->
                     if(value?.exists() == true) {
