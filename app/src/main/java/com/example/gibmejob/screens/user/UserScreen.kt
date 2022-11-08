@@ -1,12 +1,18 @@
 package com.example.gibmejob.screens.user
 
+import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,8 +22,24 @@ import com.example.gibmejob.model.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserScreen(navController: NavController, type: String) {
+fun UserScreen(navController: NavController) {
     val bottomNavController = rememberNavController()
+    val sharedPreferences = LocalContext.current.getSharedPreferences("GibMeJob", Context.MODE_PRIVATE)
+    val type = sharedPreferences.getString("type", "sadge")!!
+
+    val userViewModel = viewModel<UserViewModel>()
+    val user by userViewModel.user.observeAsState()
+    val company by userViewModel.company.observeAsState()
+
+    LaunchedEffect(key1 = true) {
+        if(type == "User") {
+            userViewModel.getUser()
+        }
+        else {
+            userViewModel.getCompany()
+        }
+    }
+
     Scaffold(
         bottomBar = {
             UserBottomNavigation(navController = bottomNavController, type = type)
@@ -25,7 +47,7 @@ fun UserScreen(navController: NavController, type: String) {
     ) {
         NavHost(
             navController = bottomNavController,
-            startDestination = Routes.SearchJobsScreen,
+            startDestination = if(type == "User") Routes.SearchJobsScreen else Routes.CurrentJobs,
             modifier = Modifier.padding(it)
         ) {
             composable(Routes.SearchJobsScreen) {
@@ -34,14 +56,11 @@ fun UserScreen(navController: NavController, type: String) {
             composable(Routes.UserApplicationsScreen) {
                 UserApplicationsScreen()
             }
-            composable(Routes.UserProfile) {
-                UserProfileScreen()
+            composable(Routes.ProfileScreen) {
+                ProfileScreen(user, company)
             }
             composable(Routes.CurrentJobs) {
                 Text(text = "jobs")
-            }
-            composable(Routes.CompanyProfile) {
-                Text(text = "profile")
             }
         }
     }
@@ -50,5 +69,5 @@ fun UserScreen(navController: NavController, type: String) {
 @Composable
 @Preview(showBackground = true)
 private fun UserScreenPreview() {
-    UserScreen(rememberNavController(),"User")
+    UserScreen(rememberNavController())
 }

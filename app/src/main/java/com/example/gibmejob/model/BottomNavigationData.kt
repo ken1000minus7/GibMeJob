@@ -11,8 +11,8 @@ sealed class BottomNavigationData(
 ) {
     object SearchJobs: BottomNavigationData("Search Jobs", Icons.Default.Search, Routes.SearchJobsScreen)
     object UserApplications: BottomNavigationData("Your Applications", Icons.Default.Assignment, Routes.UserApplicationsScreen)
-    object UserProfile: BottomNavigationData("Profile", Icons.Default.AccountCircle, Routes.UserProfile)
+    object UserProfile: BottomNavigationData("Profile", Icons.Default.AccountCircle, Routes.ProfileScreen)
 
     object CurrentJobs: BottomNavigationData("Your Jobs", Icons.Default.Business, Routes.CurrentJobs)
-    object CompanyProfile: BottomNavigationData("Company Profile", Icons.Default.Group, Routes.CompanyProfile)
+    object CompanyProfile: BottomNavigationData("Company Profile", Icons.Default.Group, Routes.ProfileScreen)
 }

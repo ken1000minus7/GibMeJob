@@ -2,6 +2,7 @@ package com.example.gibmejob.screens.login
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.gibmejob.model.Company
 import com.example.gibmejob.model.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -28,12 +29,25 @@ class LoginViewModel: ViewModel() {
         val user = User(
             uid = firebaseUser.uid,
             email = firebaseUser.email!!,
-            name = firebaseUser.displayName!!,
+            name = firebaseUser.displayName ?: "",
             photoUrl = firebaseUser.photoUrl?.toString()
         )
         db.collection("Users")
             .document(user.uid)
             .set(user)
+            .addOnCompleteListener(onComplete)
+    }
+
+    fun addCompany(firebaseUser: FirebaseUser, onComplete: (Task<Void>) -> Unit) {
+        val company = Company(
+            uid = firebaseUser.uid,
+            email = firebaseUser.email!!,
+            name = firebaseUser.displayName ?: "",
+            photoUrl = firebaseUser.photoUrl?.toString()
+        )
+        db.collection("Company")
+            .document(company.uid)
+            .set(company)
             .addOnCompleteListener(onComplete)
     }
 }

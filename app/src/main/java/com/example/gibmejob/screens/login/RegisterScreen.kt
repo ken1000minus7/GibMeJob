@@ -7,14 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -28,6 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.gibmejob.model.Routes
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,9 +49,6 @@ fun RegisterScreen(navController: NavController) {
     }
     var type by remember {
         mutableStateOf("User")
-    }
-    var typeExpanded by remember {
-        mutableStateOf(false)
     }
     val options = listOf(
         "User",
@@ -85,7 +82,7 @@ fun RegisterScreen(navController: NavController) {
                         email.value = it
                     },
                     label = { Text(text = "Email") },
-                    textStyle = TextStyle(fontSize = 22.sp),
+                    textStyle = TextStyle(fontSize = 20.sp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp)
@@ -103,8 +100,8 @@ fun RegisterScreen(navController: NavController) {
                         .padding(10.dp)
                 )
                 OutlinedTextField(
-                    value = confirmPassword.value,
                     visualTransformation = PasswordVisualTransformation(),
+                    value = confirmPassword.value,
                     onValueChange = {
                         confirmPassword.value = it
                     },
@@ -126,13 +123,15 @@ fun RegisterScreen(navController: NavController) {
                         val icon = if(it == "User") Icons.Default.Person else Icons.Default.Group
                         val selected = type == it
                         Column(
-                            modifier = Modifier.clickable {
-                                type = it
-                            }.border(
-                                width = 5.dp,
-                                color = if(selected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = RoundedCornerShape(10.dp)
-                            ).padding(10.dp),
+                            modifier = Modifier.clip(RoundedCornerShape(10.dp))
+                                .clickable {
+                                    type = it
+                                }
+                                .border(
+                                    width = 5.dp,
+                                    color = if(selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    shape = RoundedCornerShape(10.dp)
+                                ).padding(10.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Icon(
@@ -152,12 +151,18 @@ fun RegisterScreen(navController: NavController) {
                         }
                         loginViewModel.register(email.value, password.value) {
                             if(it.isSuccessful) {
-                                loginViewModel.addUser(it.result.user!!) {
+                                val onComplete = {_: Task<Void> ->
                                     navController.navigate(Routes.UserScreen) {
                                         popUpTo(navControllerBackStackEntry!!.destination.route!!) {
                                             inclusive = true
                                         }
                                     }
+                                }
+                                if(type == "User") {
+                                    loginViewModel.addUser(it.result.user!!, onComplete)
+                                }
+                                else {
+                                    loginViewModel.addCompany(it.result.user!!, onComplete)
                                 }
                                 Toast.makeText(context, "Registered successfully", Toast.LENGTH_SHORT).show()
                             }

@@ -61,9 +61,8 @@ fun GibMeJobApp() {
             RegisterScreen(navController)
         }
 
-        composable(Routes.UserScreen + "/{type}", listOf(navArgument("type") { type = NavType.StringType })) {
-            val type = it.arguments!!.getString("type")!!
-            UserScreen(navController = navController, type = type)
+        composable(Routes.UserScreen) {
+            UserScreen(navController = navController)
         }
     }
 }

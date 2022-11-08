@@ -31,7 +31,7 @@ fun SplashScreen(navController: NavController) {
 
     LaunchedEffect(key1 = true) {
         delay(1200)
-        val route = if(auth.currentUser != null) "${Routes.UserScreen}/${sharedPreferences.getString("type","User")}" else Routes.LoginOptionScreen
+        val route = if(auth.currentUser != null) Routes.UserScreen else Routes.LoginOptionScreen
         navController.navigate(route) {
             popUpTo(navControllerBackStackEntry.value!!.destination.route!!) {
                 inclusive = true

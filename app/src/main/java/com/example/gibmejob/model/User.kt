@@ -1,8 +1,8 @@
 package com.example.gibmejob.model
 
 data class User(
-    val uid: String,
-    val email: String,
-    val name: String,
+    var uid: String = "",
+    var email: String = "",
+    var name: String = "",
     var photoUrl: String? = null
 )
