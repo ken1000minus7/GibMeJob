@@ -33,9 +33,9 @@ fun SearchJobsScreen(navHostController: NavHostController) {
             items(5){
                 JobCard(
                     navHostController = navHostController,
-                    jobName = "Job $it",
-                    companyName = "Company $it",
-                    jobId = it.toString()
+                    jobName = "Job ${it + 1}",
+                    companyName = "Company ${it+1}",
+                    jobId = (it+1).toString()
                 )
             }
         }

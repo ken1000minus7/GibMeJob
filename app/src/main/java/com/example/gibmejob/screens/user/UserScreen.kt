@@ -29,7 +29,6 @@ fun UserScreen(navController: NavHostController) {
     val bottomNavController = rememberNavController()
     val sharedPreferences = LocalContext.current.getSharedPreferences("GibMeJob", Context.MODE_PRIVATE)
     val entity = sharedPreferences.getString("type", "sadge")!!
-
     val userViewModel = viewModel<UserViewModel>()
     val user by userViewModel.user.observeAsState()
     val company by userViewModel.company.observeAsState()
@@ -71,7 +70,7 @@ fun UserScreen(navController: NavHostController) {
                     type = NavType.StringType
                 })) { backStackEntry ->
                 backStackEntry.arguments?.getString("jobId")?.let { jobId ->
-                    UserJobScreen(jobId = jobId)
+                    UserJobScreen(jobId = jobId, navController, bottomNavController)
                 }
             }
         }
