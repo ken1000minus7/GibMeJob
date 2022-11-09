@@ -46,23 +46,13 @@ fun LoginOptionScreen(navController: NavController) {
             ) {
                 Button(
                     onClick = {
-                        navController.navigate(Routes.LoginScreen + "/User")
+                        navController.navigate(Routes.LoginScreen)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp)
                 ) {
-                    Text(text = "Login as User", fontSize = 22.sp)
-                }
-                Button(
-                    onClick = {
-                        navController.navigate(Routes.LoginScreen + "/Company")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    Text(text = "Login as Company", fontSize = 22.sp)
+                    Text(text = "Login", fontSize = 22.sp)
                 }
                 Button(
                     onClick = {

@@ -4,7 +4,9 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
@@ -33,18 +35,20 @@ import com.google.firebase.auth.FirebaseAuth
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(navController: NavController) {
-    val auth = FirebaseAuth.getInstance()
     val loginViewModel = viewModel<LoginViewModel>()
     val navControllerBackStackEntry by navController.currentBackStackEntryAsState()
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("GibMeJob", Context.MODE_PRIVATE)
-    val email = remember {
+    var name by remember {
         mutableStateOf("")
     }
-    val password = remember {
+    var email by remember {
         mutableStateOf("")
     }
-    val confirmPassword = remember {
+    var password by remember {
+        mutableStateOf("")
+    }
+    var confirmPassword by remember {
         mutableStateOf("")
     }
     var type by remember {
@@ -77,39 +81,55 @@ fun RegisterScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedTextField(
-                    value = email.value,
+                    value = name,
                     onValueChange = {
-                        email.value = it
+                        name = it
+                    },
+                    label = { Text(text = "Name") },
+                    textStyle = TextStyle(fontSize = 20.sp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    maxLines = 1
+                )
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = {
+                        email = it
                     },
                     label = { Text(text = "Email") },
                     textStyle = TextStyle(fontSize = 20.sp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    maxLines = 1
                 )
                 OutlinedTextField(
-                    value = password.value,
+                    value = password,
                     visualTransformation = PasswordVisualTransformation(),
                     onValueChange = {
-                        password.value = it
+                        password = it
                     },
                     label = { Text(text = "Password") },
-                    textStyle = TextStyle(fontSize = 22.sp),
+                    textStyle = TextStyle(fontSize = 20.sp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    maxLines = 1
                 )
                 OutlinedTextField(
                     visualTransformation = PasswordVisualTransformation(),
-                    value = confirmPassword.value,
+                    value = confirmPassword,
                     onValueChange = {
-                        confirmPassword.value = it
+                        confirmPassword = it
                     },
                     label = { Text(text = "Confirm Password") },
-                    textStyle = TextStyle(fontSize = 22.sp),
+                    textStyle = TextStyle(fontSize = 20.sp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    maxLines = 1
                 )
                 Text(text = "Who are you?", fontSize = 22.sp)
                 Row(
@@ -123,15 +143,17 @@ fun RegisterScreen(navController: NavController) {
                         val icon = if(it == "User") Icons.Default.Person else Icons.Default.Group
                         val selected = type == it
                         Column(
-                            modifier = Modifier.clip(RoundedCornerShape(10.dp))
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
                                 .clickable {
                                     type = it
                                 }
                                 .border(
                                     width = 5.dp,
-                                    color = if(selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
                                     shape = RoundedCornerShape(10.dp)
-                                ).padding(10.dp),
+                                )
+                                .padding(10.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Icon(
@@ -145,27 +167,31 @@ fun RegisterScreen(navController: NavController) {
                 }
                 Button(
                     onClick = {
-                        if(password.value != confirmPassword.value) {
+                        if(name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                            Toast.makeText(context, "One or more fields are empty", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
+                        if(password != confirmPassword) {
                             Toast.makeText(context, "Password and confirm password do not match", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        loginViewModel.register(email.value, password.value) {
+                        loginViewModel.register(email, password) {
                             if(it.isSuccessful) {
                                 val onComplete = {_: Task<Void> ->
+                                    sharedPreferences.edit()
+                                        .putString("type",type)
+                                        .apply()
                                     navController.navigate(Routes.UserScreen) {
                                         popUpTo(navControllerBackStackEntry!!.destination.route!!) {
                                             inclusive = true
                                         }
                                     }
-                                    sharedPreferences.edit()
-                                        .putString("type",type)
-                                        .apply()
                                 }
                                 if(type == "User") {
-                                    loginViewModel.addUser(it.result.user!!, onComplete)
+                                    loginViewModel.addUser(it.result.user!!, name, onComplete)
                                 }
                                 else {
-                                    loginViewModel.addCompany(it.result.user!!, onComplete)
+                                    loginViewModel.addCompany(it.result.user!!, name, onComplete)
                                 }
                                 Toast.makeText(context, "Registered successfully", Toast.LENGTH_SHORT).show()
                             }
@@ -174,9 +200,9 @@ fun RegisterScreen(navController: NavController) {
                             }
                         }
                     },
-                    modifier = Modifier.padding(20.dp)
+                    modifier = Modifier.padding(15.dp)
                 ) {
-                    Text(text = "Submit", fontSize = 25.sp)
+                    Text(text = "Submit", fontSize = 23.sp)
                 }
             }
         }

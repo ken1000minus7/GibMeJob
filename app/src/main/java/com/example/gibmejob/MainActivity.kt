@@ -53,16 +53,14 @@ fun GibMeJobApp() {
         composable(Routes.LoginOptionScreen) {
             LoginOptionScreen(navController)
         }
-        composable(Routes.LoginScreen + "/{type}", listOf(navArgument("type") { type = NavType.StringType })) {
-            val type = it.arguments!!.getString("type")!!
-            LoginScreen(navController = navController, type = type)
+        composable(Routes.LoginScreen) {
+            LoginScreen(navController)
         }
         composable(Routes.RegisterScreen) {
             RegisterScreen(navController)
         }
-
         composable(Routes.UserScreen) {
-            UserScreen(navController = navController)
+            UserScreen(navController)
         }
     }
 }
