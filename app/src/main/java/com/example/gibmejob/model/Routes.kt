@@ -8,9 +8,10 @@ object Routes {
 
     const val UserScreen = "UserScreen"
     const val SearchJobsScreen = "SearchJobsScreen"
+    const val UserJobScreen = "UserJobScreen"
     const val UserApplicationsScreen = "UserApplicationsScreen"
     const val ProfileScreen = "ProfileScreen"
 
     const val CurrentJobs = "CurrentJobs"
-    const val CompanyProfile = "CompanyProfile"
+    const val CompanyJobScreen = "CompanyJobScreen"
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,25 +13,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.gibmejob.components.UserBottomNavigation
 import com.example.gibmejob.model.Routes
+import com.example.gibmejob.model.Routes.UserJobScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserScreen(navController: NavController) {
+fun UserScreen(navController: NavHostController) {
     val bottomNavController = rememberNavController()
     val sharedPreferences = LocalContext.current.getSharedPreferences("GibMeJob", Context.MODE_PRIVATE)
-    val type = sharedPreferences.getString("type", "sadge")!!
+    val entity = sharedPreferences.getString("type", "sadge")!!
 
     val userViewModel = viewModel<UserViewModel>()
     val user by userViewModel.user.observeAsState()
     val company by userViewModel.company.observeAsState()
 
     LaunchedEffect(key1 = true) {
-        if(type == "User") {
+        if(entity == "User") {
             userViewModel.getUser()
         }
         else {
@@ -42,16 +45,16 @@ fun UserScreen(navController: NavController) {
 
     Scaffold(
         bottomBar = {
-            UserBottomNavigation(navController = bottomNavController, type = type)
+            UserBottomNavigation(navController = bottomNavController, type = entity)
         }
     ) {
         NavHost(
             navController = bottomNavController,
-            startDestination = if(type == "User") Routes.SearchJobsScreen else Routes.CurrentJobs,
+            startDestination = if(entity == "User") Routes.SearchJobsScreen else Routes.CurrentJobs,
             modifier = Modifier.padding(it)
         ) {
             composable(Routes.SearchJobsScreen) {
-                SearchJobsScreen()
+                SearchJobsScreen(navHostController = bottomNavController)
             }
             composable(Routes.UserApplicationsScreen) {
                 UserApplicationsScreen()
@@ -60,7 +63,16 @@ fun UserScreen(navController: NavController) {
                 ProfileScreen(user, company)
             }
             composable(Routes.CurrentJobs) {
-                Text(text = "jobs")
+                CompanyJobScreen()
+            }
+            composable(
+                route = "UserJobScreen/{jobId}",
+                arguments = listOf(navArgument("jobId"){
+                    type = NavType.StringType
+                })) { backStackEntry ->
+                backStackEntry.arguments?.getString("jobId")?.let { jobId ->
+                    UserJobScreen(jobId = jobId)
+                }
             }
         }
     }
