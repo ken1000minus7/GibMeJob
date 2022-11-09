@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.gibmejob.components.UserBottomNavigation
 import com.example.gibmejob.model.Routes
-import com.example.gibmejob.model.Routes.UserJobScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +54,7 @@ fun UserScreen(navController: NavHostController) {
                 SearchJobsScreen(navHostController = bottomNavController)
             }
             composable(Routes.UserApplicationsScreen) {
-                UserApplicationsScreen()
+                UserApplicationsScreen(bottomNavController)
             }
             composable(Routes.ProfileScreen) {
                 ProfileScreen(user, company)
@@ -70,7 +68,7 @@ fun UserScreen(navController: NavHostController) {
                     type = NavType.StringType
                 })) { backStackEntry ->
                 backStackEntry.arguments?.getString("jobId")?.let { jobId ->
-                    UserJobScreen(jobId = jobId, navController, bottomNavController)
+                    UserJobScreen(jobId = jobId, bottomNavController)
                 }
             }
         }
