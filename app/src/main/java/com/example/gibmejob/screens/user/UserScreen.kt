@@ -60,7 +60,7 @@ fun UserScreen(navController: NavHostController) {
                 ProfileScreen(user, company)
             }
             composable(Routes.CurrentJobs) {
-                CompanyJobScreen()
+                CompanyJobScreen(navController)
             }
             composable(
                 route = "UserJobScreen/{jobId}",
