@@ -44,7 +44,9 @@ fun UserProfile(user: User) {
     }
     
     if(aboutDialogOpen) {
-        
+        EditAboutDialog(about = user.about) {
+            aboutDialogOpen = false
+        }
     }
     
     if(skillDialogOpen) {
@@ -86,13 +88,13 @@ fun UserProfile(user: User) {
         ) {
             Text(text = "About", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             if(auth.uid == user.uid) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { aboutDialogOpen = true }) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "edit")
                 }
             }
         }
         Text(
-            text = if(user.about.isEmpty()) "(Nothing added yet)" else user.about ,
+            text = user.about.ifEmpty { "(Nothing added yet)" },
             fontSize = 15.sp,
             modifier = Modifier.fillMaxWidth()
         )

@@ -166,4 +166,13 @@ class UserViewModel: ViewModel() {
                 .addOnCompleteListener(onComplete)
         }
     }
+
+    fun updateAbout(about: String, onComplete: (Task<Void>) -> Unit) {
+        viewModelScope.launch {
+            db.collection(Constants.Users)
+                .document(auth.uid!!)
+                .update(mapOf("about" to about))
+                .addOnCompleteListener(onComplete)
+        }
+    }
 }
