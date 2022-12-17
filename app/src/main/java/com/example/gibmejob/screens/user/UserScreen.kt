@@ -57,7 +57,7 @@ fun UserScreen(navController: NavHostController) {
                 UserApplicationsScreen(bottomNavController)
             }
             composable(Routes.ProfileScreen) {
-                ProfileScreen(user, company)
+                ProfileScreen(user, company, navController)
             }
             composable(Routes.CurrentJobs) {
                 CompanyJobScreen(navController)

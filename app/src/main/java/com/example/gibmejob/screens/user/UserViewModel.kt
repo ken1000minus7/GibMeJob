@@ -144,4 +144,26 @@ class UserViewModel: ViewModel() {
                 }
         }
     }
+
+    fun addSkill(skill: String, skills: List<String>, onComplete: (Task<Void>) -> Unit) {
+        viewModelScope.launch {
+            val skillList = skills.toMutableList()
+            skillList.add(skill)
+            db.collection(Constants.Users)
+                .document(auth.uid!!)
+                .update(mapOf("skills" to skillList))
+                .addOnCompleteListener(onComplete)
+        }
+    }
+
+    fun deleteSkill(i: Int, skills: List<String>, onComplete: (Task<Void>) -> Unit) {
+        viewModelScope.launch {
+            val skillList = skills.toMutableList()
+            skillList.removeAt(i)
+            db.collection(Constants.Users)
+                .document(auth.uid!!)
+                .update(mapOf("skills" to skillList))
+                .addOnCompleteListener(onComplete)
+        }
+    }
 }
