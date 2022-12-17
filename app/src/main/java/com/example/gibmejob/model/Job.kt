@@ -1,7 +1,9 @@
 package com.example.gibmejob.model
 
 data class Job(
-    var name: String,
+    var jobId: String = "",
+    var title: String,
     var description: String,
-    var comapnyUid: String
+    var companyUid: String,
+    var companyName: String
 )
