@@ -96,4 +96,52 @@ class UserViewModel: ViewModel() {
                 }
         }
     }
+
+    fun getCompanyJobs(companyId: String) {
+        viewModelScope.launch {
+            db.collection(Constants.Jobs)
+                .whereEqualTo("companyId",companyId)
+                .get()
+                .addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        jobs.postValue(it.result.toObjects(Job::class.java))
+                    }
+                    else {
+                        it.exception?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun getUserJobApplications(userId: String) {
+        viewModelScope.launch {
+            db.collection(Constants.JobApplications)
+                .whereEqualTo("userId",userId)
+                .get()
+                .addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        jobApplications.postValue(it.result.toObjects(JobApplication::class.java))
+                    }
+                    else {
+                        it.exception?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun getJobApplications(jobId: String) {
+        viewModelScope.launch {
+            db.collection(Constants.JobApplications)
+                .whereEqualTo("jobId",jobId)
+                .get()
+                .addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        jobApplications.postValue(it.result.toObjects(JobApplication::class.java))
+                    }
+                    else {
+                        it.exception?.printStackTrace()
+                    }
+                }
+        }
+    }
 }
