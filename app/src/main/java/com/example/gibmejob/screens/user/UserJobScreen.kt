@@ -25,11 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.gibmejob.model.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserJobScreen(
-    jobId: String, bottomNavController: NavController
+    jobId: String,
+    bottomNavController: NavController
 ) {
     Scaffold(topBar = {
         TopAppBar(title = { Text(text = "Job $jobId")},
@@ -40,7 +42,8 @@ fun UserJobScreen(
                         .size(40.dp)
                         .clickable {
                             bottomNavController.navigateUp()
-                        })
+                        }
+                        .padding(10.dp))
             })
     }) {
         Column(modifier = Modifier
@@ -58,7 +61,7 @@ fun UserJobScreen(
                 Text(text = "Job Description:",fontSize = 20.sp)
                 Text(text = "lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..")
                 Text(text = "")
-                Button(onClick = {  }) {
+                Button(onClick = { bottomNavController.navigate(Routes.CreateUserApplicationScreen) }) {
                     Text(text = "Apply")
                 }
         }

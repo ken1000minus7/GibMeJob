@@ -42,7 +42,7 @@ Scaffold(floatingActionButton = {
                     jobName = "Job ${it + 1}",
                     numberOfApplicants = listOf(100,12,13,15,156).random(),
                     jobId = (it+1).toString(),
-                    status  = listOf("Rejected", "In Progress", "Accepted").random() //TODO : Use definite values
+                    status  = listOf("Open", "In Progress", "Accepted").random() //TODO : Use definite values
                 )
             }
         }

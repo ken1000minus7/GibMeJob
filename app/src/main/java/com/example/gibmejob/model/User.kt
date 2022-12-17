@@ -5,5 +5,6 @@ data class User(
     var email: String = "",
     var name: String = "",
     var photoUrl: String? = null,
-    val type: String = "User"
+    val type: String = "User",
+    val skills: List<String> = listOf()
 )

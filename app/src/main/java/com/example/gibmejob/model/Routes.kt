@@ -11,6 +11,7 @@ object Routes {
     const val UserJobScreen = "UserJobScreen"
     const val UserApplicationsScreen = "UserApplicationsScreen"
     const val ProfileScreen = "ProfileScreen"
+    const val CreateUserApplicationScreen = "CreateUserApplicationScreen"
 
     const val CurrentJobs = "CurrentJobs"
     const val CompanyJobScreen = "CompanyJobScreen"

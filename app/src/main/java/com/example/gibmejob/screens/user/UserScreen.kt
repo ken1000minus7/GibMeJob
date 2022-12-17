@@ -71,6 +71,10 @@ fun UserScreen(navController: NavHostController) {
                     UserJobScreen(jobId = jobId, bottomNavController)
                 }
             }
+            composable(
+                route = Routes.CreateUserApplicationScreen){
+                CreateUserApplicationScreen(bottomNavController)
+            }
         }
     }
 }

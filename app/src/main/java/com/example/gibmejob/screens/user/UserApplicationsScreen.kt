@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,19 +25,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.gibmejob.model.Routes
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserApplicationsScreen(navHostController : NavHostController) {
-
-    LazyColumn{
-        items(5){
-            ApplicationCard(
-                navHostController = navHostController,
-                jobName = "Job ${it + 1}",
-                companyName = "Company ${it+1}",
-                jobId = (it+1).toString(),
-                status  = listOf("Rejected", "In Progress", "Accepted").random() //TODO : Use definite values
-            )
+    Scaffold(topBar = {}) {
+        Column(modifier = Modifier.padding(it)) {
+            LazyColumn {
+                items(5) {
+                    ApplicationCard(
+                        navHostController = navHostController,
+                        jobName = "Job ${it + 1}",
+                        companyName = "Company ${it + 1}",
+                        jobId = (it + 1).toString(),
+                        status = listOf(
+                            "Rejected",
+                            "In Progress",
+                            "Accepted"
+                        ).random() //TODO : Use definite values
+                    )
+                }
+            }
         }
     }
 }
@@ -63,6 +75,4 @@ fun ApplicationCard(navHostController: NavHostController,
 
 @Composable
 fun ApplicationScreen(bottomNavController : NavHostController) {
-
-
 }
