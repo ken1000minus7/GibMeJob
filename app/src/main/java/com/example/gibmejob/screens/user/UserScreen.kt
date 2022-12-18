@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,7 +22,7 @@ import com.example.gibmejob.model.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserScreen(navController: NavHostController) {
+fun UserScreen() {
     val bottomNavController = rememberNavController()
     val sharedPreferences = LocalContext.current.getSharedPreferences("GibMeJob", Context.MODE_PRIVATE)
     val entity = sharedPreferences.getString("type", "sadge")!!
@@ -57,10 +56,27 @@ fun UserScreen(navController: NavHostController) {
                 UserApplicationsScreen(bottomNavController)
             }
             composable(Routes.ProfileScreen) {
-                ProfileScreen(user, company, navController)
+                ProfileScreen(user, company, bottomNavController )
             }
             composable(Routes.CurrentJobs) {
-                CompanyJobScreen(navController)
+                CompanyJobsScreen(bottomNavController, userViewModel)
+            }
+            composable(Routes.CreateCompanyJobScreen) {
+                CreateCompanyJobScreen(userViewModel, bottomNavController)
+            }
+            composable(
+                route = "CompanyJobScreen/{jobId}",
+                arguments = listOf(navArgument("jobId"){
+                    type = NavType.StringType
+                }
+            )) { backStackEntry ->
+                backStackEntry.arguments?.getString("jobId")?.let { jobId ->
+                    CompanyJobScreen(
+                        jobId = jobId,
+                        bottomNavController,
+                        userViewModel
+                    )
+                }
             }
             composable(
                 route = "UserJobScreen/{jobId}",
@@ -82,5 +98,5 @@ fun UserScreen(navController: NavHostController) {
 @Composable
 @Preview(showBackground = true)
 private fun UserScreenPreview() {
-    UserScreen(rememberNavController())
+    UserScreen()
 }

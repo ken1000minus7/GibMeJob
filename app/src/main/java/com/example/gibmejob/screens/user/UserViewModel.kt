@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.log10
 import kotlin.math.max
@@ -22,10 +22,16 @@ class UserViewModel: ViewModel() {
     private val db = FirebaseFirestore.getInstance()
     val user: MutableLiveData<User?> = MutableLiveData(null)
     val company: MutableLiveData<Company?> = MutableLiveData(null)
-    val jobs: MutableLiveData<MutableList<Job>> = MutableLiveData(mutableListOf())
+    val jobs: MutableStateFlow<MutableList<Job>> = MutableStateFlow(mutableListOf())
     val jobApplications: MutableLiveData<MutableList<JobApplication>> = MutableLiveData(mutableListOf())
     val jobRecommendations: MutableLiveData<MutableList<Job>> = MutableLiveData(mutableListOf())
     val userRecommendations: MutableLiveData<MutableList<User>> = MutableLiveData(mutableListOf())
+    val job: MutableStateFlow<MutableList<Job>> = MutableStateFlow(mutableListOf())
+    val uid
+        get() = auth.uid!!
+    val name
+        get() = auth.currentUser?.displayName
+
 
     fun getUser() {
         viewModelScope.launch {
@@ -58,7 +64,7 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    fun addJob(job: Job, onComplete: (Task<DocumentReference>) -> Unit) {
+    fun addJob(job: Job, onComplete:  () -> Unit) {
         viewModelScope.launch {
             db.collection(Constants.Jobs)
                 .add(job)
@@ -69,7 +75,7 @@ class UserViewModel: ViewModel() {
                             .document(job.jobId)
                             .set(job, SetOptions.merge())
                     }
-                    onComplete(it)
+                    onComplete()
                 }
         }
     }
@@ -96,7 +102,7 @@ class UserViewModel: ViewModel() {
                 .get()
                 .addOnCompleteListener {
                     if(it.isSuccessful) {
-                        jobs.postValue(it.result.toObjects(Job::class.java))
+                        jobs.value = (it.result.toObjects(Job::class.java))
                     }
                     else {
                         it.exception?.printStackTrace()
@@ -108,11 +114,12 @@ class UserViewModel: ViewModel() {
     fun getCompanyJobs(companyId: String) {
         viewModelScope.launch {
             db.collection(Constants.Jobs)
-                .whereEqualTo("companyId",companyId)
+                .whereEqualTo("companyUid",companyId)
                 .get()
                 .addOnCompleteListener {
                     if(it.isSuccessful) {
-                        jobs.postValue(it.result.toObjects(Job::class.java))
+                        jobs.value = (it.result.toObjects(Job::class.java))
+                        Log.d("wtf",it.result.toObjects(Job::class.java).toString())
                     }
                     else {
                         it.exception?.printStackTrace()
@@ -148,6 +155,19 @@ class UserViewModel: ViewModel() {
                     }
                     else {
                         it.exception?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun getJobByJobIb(jobId: String){
+        viewModelScope.launch {
+            db.collection(Constants.Jobs)
+                .whereEqualTo("jobId",jobId)
+                .get()
+                .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        job.value = it.result.toObjects(Job::class.java)
                     }
                 }
         }
