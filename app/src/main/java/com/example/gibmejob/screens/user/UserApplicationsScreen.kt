@@ -26,7 +26,7 @@ import androidx.navigation.NavHostController
 fun UserApplicationsScreen(navHostController : NavHostController, viewModel: UserViewModel) {
     Scaffold(topBar = {}) {
         viewModel.getUserJobApplications(viewModel.uid)
-        val userJobApplications by viewModel.jobApplications.observeAsState()
+        val userJobApplications by viewModel.userShowApplications.observeAsState()
         Column(modifier = Modifier.padding(it)) {
             LazyColumn {
                 items(userJobApplications?.toList() ?: listOf()) { jobApplication ->

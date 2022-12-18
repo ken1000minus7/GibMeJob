@@ -86,6 +86,9 @@ fun CreateUserApplicationScreen(
                         Toast.makeText(context, "Job Application posted", Toast.LENGTH_SHORT)
                             .show()
                         userViewModel.updateJobApplicantsCount(jobId)
+                        user?.let {
+                            userViewModel.updateJobApplicants(it, jobId)
+                        }
                         bottomNavController.navigateUp()
                     }
                 }) {

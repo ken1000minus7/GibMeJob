@@ -81,6 +81,19 @@ fun UserScreen(navControllerSec: NavHostController) {
                 }
             }
             composable(
+                route = "ShowUserInfoScreen/{userId}",
+                arguments = listOf(navArgument("userId"){
+                    type = NavType.StringType
+                })
+            ) { backStackEntry ->
+                backStackEntry.arguments?.getString("userId")?.let { userId ->
+                    ShowUserInfoScreen(
+                        userId = userId,
+                        userViewModel
+                    )
+                }
+            }
+            composable(
                 route = "UserJobScreen/{jobId}",
                 arguments = listOf(navArgument("jobId"){
                     type = NavType.StringType

@@ -1,5 +1,6 @@
 package com.example.gibmejob.screens.user
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,8 @@ class UserViewModel: ViewModel() {
     val company: MutableLiveData<Company?> = MutableLiveData(null)
     val jobs: MutableStateFlow<MutableList<Job>> = MutableStateFlow(mutableListOf())
     val jobApplications: MutableLiveData<MutableList<JobApplication>> =
+        MutableLiveData(mutableListOf())
+    val userShowApplications : MutableLiveData<MutableList<JobApplication>> =
         MutableLiveData(mutableListOf())
     val jobRecommendations: MutableLiveData<MutableList<Job>> = MutableLiveData(mutableListOf())
     val userRecommendations: MutableLiveData<MutableList<User>> = MutableLiveData(mutableListOf())
@@ -96,6 +99,16 @@ class UserViewModel: ViewModel() {
         }
     }
 
+    fun updateJobApplicants(user : User, jobId: String){
+        viewModelScope.launch {
+            db.collection(Constants.Jobs)
+                .document(jobId)
+                .update("applicants", FieldValue.arrayUnion(user))
+                .addOnSuccessListener { }
+                .addOnFailureListener { }
+        }
+    }
+
     fun addApplication(jobApplication: JobApplication, onComplete: () -> Unit) {
         viewModelScope.launch {
             db.collection(Constants.JobApplications)
@@ -148,7 +161,7 @@ class UserViewModel: ViewModel() {
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        jobApplications.postValue(it.result.toObjects(JobApplication::class.java))
+                        userShowApplications.postValue(it.result.toObjects(JobApplication::class.java))
                     } else {
                         it.exception?.printStackTrace()
                     }
@@ -179,6 +192,8 @@ class UserViewModel: ViewModel() {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         job.value = it.result.toObjects(Job::class.java).first()
+                    } else {
+                        Log.d("Working", "not")
                     }
                 }
         }

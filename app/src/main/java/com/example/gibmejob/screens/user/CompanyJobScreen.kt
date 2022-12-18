@@ -3,6 +3,7 @@ package com.example.gibmejob.screens.user
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gibmejob.R
 import com.example.gibmejob.components.Chip
+import com.example.gibmejob.model.Routes
 import com.example.gibmejob.model.User
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -43,7 +45,9 @@ fun CompanyJobScreen(
     }
     userViewModel.getJobByJobId(jobId)
     val job by userViewModel.job.collectAsState()
-    val jobApplications by userViewModel.jobApplications.observeAsState()
+    val applicants by remember {
+        mutableStateOf(job?.applicants)
+    }
 
     Scaffold(topBar = {}, modifier = Modifier.fillMaxSize()) {
         Column(
@@ -82,7 +86,9 @@ fun CompanyJobScreen(
                     }
                 }
                 val pagerState = rememberPagerState()
-                TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)) {
                     val scope = rememberCoroutineScope()
                     Tab(selected = pagerState.currentPage == 0, onClick = {
                         scope.launch {
@@ -110,12 +116,10 @@ fun CompanyJobScreen(
                         }
                         else -> {
                             LazyColumn {
-                                items(jobApplications ?: mutableListOf()) { application->
-                                    ApplicationCard(
-                                        companyName = application.companyName,
-                                        jobName = application.job,
-                                        status = application.selected.toString()
-                                    )
+                                items(job?.applicants ?: listOf()) { applicant ->
+                                    UserCard(user = applicant, Modifier.clickable {
+                                        navController.navigate("${Routes.ShowUserInfoScreen}/${applicant.uid}")
+                                    })
                                 }
                             }
                         }
@@ -130,7 +134,7 @@ fun CompanyJobScreen(
 fun IndividualJobDetails(
     role: String,
     applicants: Int,
-    jobDesc: String
+    jobDesc: String,
 ) {
 
     Box(
@@ -164,8 +168,10 @@ fun IndividualJobDetails(
 }
 
 @Composable
-fun UserCard(user: User) {
-    ElevatedCard(modifier = Modifier.padding(10.dp)) {
+fun UserCard(user: User,
+             modifier : Modifier = Modifier
+) {
+    ElevatedCard(modifier = modifier.padding(10.dp)) {
         Row(modifier = Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = user.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
