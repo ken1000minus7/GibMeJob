@@ -54,7 +54,7 @@ fun CompanyProfile(company: Company) {
                 Text(text = company.email, fontSize = 15.sp, fontWeight = FontWeight.Light)
             }
             Image(
-                painter = painterResource(id = R.drawable.person),
+                painter = painterResource(id = R.drawable.company),
                 contentDescription = company.name,
                 modifier = Modifier
                     .height(70.dp)

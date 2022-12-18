@@ -43,7 +43,7 @@ fun CompanyJobScreen(
     val statusState by remember {
         mutableStateOf("Open")
     }
-    userViewModel.getJobByJobIb(jobId)
+    userViewModel.getJobByJobId(jobId)
     val job by userViewModel.job.collectAsState()
     Scaffold(topBar = {}) {
 
