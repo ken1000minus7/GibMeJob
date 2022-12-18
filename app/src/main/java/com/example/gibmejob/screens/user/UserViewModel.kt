@@ -88,7 +88,7 @@ class UserViewModel: ViewModel() {
 
     fun updateJobApplicantsCount(jobId: String) {
         viewModelScope.launch {
-            db.collection(Constants.JobApplications)
+            db.collection(Constants.Jobs)
                 .document(jobId)
                 .update("totalApplicants", FieldValue.increment(1))
                 .addOnSuccessListener { }

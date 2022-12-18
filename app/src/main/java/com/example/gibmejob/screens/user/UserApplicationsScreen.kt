@@ -31,7 +31,6 @@ fun UserApplicationsScreen(navHostController : NavHostController, viewModel: Use
             LazyColumn {
                 items(userJobApplications?.toList() ?: listOf()) { jobApplication ->
                     ApplicationCard(
-                        navHostController = navHostController,
                         jobName = jobApplication.job,
                         companyName = jobApplication.companyName,
                         status = jobApplication.selected.toString()
@@ -44,7 +43,6 @@ fun UserApplicationsScreen(navHostController : NavHostController, viewModel: Use
 
 @Composable
 fun ApplicationCard(
-    navHostController: NavHostController,
     companyName: String,
     jobName: String,
     status: String

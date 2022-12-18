@@ -76,6 +76,7 @@ fun CreateUserApplicationScreen(
                         email = email.text,
                         phone = phoneNumber.text,
                         job = job?.title ?: "",
+                        jobId = jobId,
                         userId = userViewModel.uid,
                         companyId = job?.companyUid ?: "",
                         userName = userViewModel.name,

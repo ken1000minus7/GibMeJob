@@ -43,16 +43,17 @@ fun CompanyJobScreen(
     }
     userViewModel.getJobByJobId(jobId)
     val job by userViewModel.job.collectAsState()
+    val jobApplications by userViewModel.jobApplications.observeAsState()
 
     Scaffold(topBar = {}, modifier = Modifier.fillMaxSize()) {
         Column(
-            verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
         ) {
             job?.let { jobRes->
                 userViewModel.getUserRecommendations(jobRes)
+                userViewModel.getJobApplications(jobId)
                 val userRecommendations by userViewModel.userRecommendations.observeAsState()
                 Log.d("lol", userRecommendations?.toString() ?: "")
 
@@ -81,23 +82,23 @@ fun CompanyJobScreen(
                     }
                 }
                 val pagerState = rememberPagerState()
-//                TabRow(selectedTabIndex = pagerState.currentPage) {
-//                    val scope = rememberCoroutineScope()
-//                    Tab(selected = pagerState.currentPage == 0, onClick = {
-//                        scope.launch {
-//                            pagerState.animateScrollToPage(0)
-//                        }
-//                    }) {
-//                        Text(text = "Recommendations")
-//                    }
-//                    Tab(selected = pagerState.currentPage == 1, onClick = {
-//                        scope.launch {
-//                            pagerState.animateScrollToPage(1)
-//                        }
-//                    }) {
-//                        Text(text = "Applications")
-//                    }
-//                }
+                TabRow(selectedTabIndex = pagerState.currentPage, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                    val scope = rememberCoroutineScope()
+                    Tab(selected = pagerState.currentPage == 0, onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    }) {
+                        Text(text = "Recommendations", modifier = Modifier.padding(10.dp))
+                    }
+                    Tab(selected = pagerState.currentPage == 1, onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(1)
+                        }
+                    }) {
+                        Text(text = "Applications", modifier = Modifier.padding(10.dp))
+                    }
+                }
                 HorizontalPager(count = 2, state = pagerState) { page->
                     when(page) {
                         0 -> {
@@ -108,7 +109,15 @@ fun CompanyJobScreen(
                             }
                         }
                         else -> {
-
+                            LazyColumn {
+                                items(jobApplications ?: mutableListOf()) { application->
+                                    ApplicationCard(
+                                        companyName = application.companyName,
+                                        jobName = application.job,
+                                        status = application.selected.toString()
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -165,7 +174,10 @@ fun UserCard(user: User) {
             Image(
                 painter = painterResource(id = R.drawable.person),
                 contentDescription = "" ,
-                modifier = Modifier.height(30.dp).width(30.dp).border(1.dp, Color.Black, RoundedCornerShape(50)),
+                modifier = Modifier
+                    .height(30.dp)
+                    .width(30.dp)
+                    .border(1.dp, Color.Black, RoundedCornerShape(50)),
                 contentScale = ContentScale.Crop
             )
         }

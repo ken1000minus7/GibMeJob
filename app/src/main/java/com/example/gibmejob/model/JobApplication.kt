@@ -5,6 +5,7 @@ data class JobApplication(
     var userId: String = "",
     var userName: String = "",
     var job : String = "",
+    var jobId: String = "",
     var email: String = "",
     var phone: String = "",
     var skills: List<String> = listOf(),
