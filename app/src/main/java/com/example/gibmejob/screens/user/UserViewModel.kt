@@ -55,7 +55,6 @@ class UserViewModel: ViewModel() {
                 .addSnapshotListener { value, error ->
                     if(value?.exists() == true) {
                         company.postValue(value.toObject(Company::class.java))
-                        getUserRecommendations()
                     }
                     else {
                         error?.printStackTrace()
@@ -160,7 +159,7 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    fun getJobByJobIb(jobId: String){
+    fun getJobByJobId(jobId: String){
         viewModelScope.launch {
             db.collection(Constants.Jobs)
                 .whereEqualTo("jobId",jobId)
@@ -254,8 +253,55 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    private fun getUserRecommendations() {
+    private fun getUserRecommendations(job: Job) {
+        viewModelScope.launch {
+            db.collection(Constants.Users)
+                .whereEqualTo("type", "User")
+                .get()
+                .addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        val users = it.result.toObjects(User::class.java)
+                        val tokens = "${job.title} ${job.description}".lowercase().split(" ").toMutableList()
+                        tokens.addAll(job.skillsRequired.map{skill-> skill.lowercase()})
 
+                        val userDocuments = users.map { user->
+                            val skills = mutableListOf<String>()
+                            user.skills.forEach { skill->
+                                skills.addAll(skill.lowercase().split(" "))
+                            }
+                            skills
+                        }
+
+                        val scoreMap = mutableMapOf<String, Double>()
+
+                        users.forEachIndexed { index, user->
+                            val document = userDocuments[index]
+                            var numerator = 0.0
+                            tokens.forEach { token->
+                                numerator += tfIdf(token, document, userDocuments)
+                            }
+                            var denominator = 0.0
+                            document.forEach { skill->
+                                val skillTfIdf = tfIdf(skill, document, userDocuments)
+                                denominator += skillTfIdf * skillTfIdf
+                            }
+                            denominator = sqrt(denominator)
+                            val score = (numerator + 1) / (denominator + 1)
+                            scoreMap[user.uid] = score
+                        }
+
+                        users.sortByDescending { user->
+                            scoreMap[user.uid]
+                        }
+
+                        val recommendations = users.subList(0, min(5, users.size))
+                        userRecommendations.postValue(recommendations)
+                    }
+                    else {
+                        it.exception?.printStackTrace()
+                    }
+                }
+        }
     }
 
     private fun tfIdf(term: String, document: List<String>, documents: List<List<String>>): Double {

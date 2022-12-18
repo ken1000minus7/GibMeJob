@@ -1,6 +1,5 @@
 package com.example.gibmejob.screens.user
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,7 +42,7 @@ fun CompanyJobScreen(
     val statusState by remember {
         mutableStateOf("Open")
     }
-    userViewModel.getJobByJobIb(jobId)
+    userViewModel.getJobByJobId(jobId)
     val job by userViewModel.job.collectAsState()
     Scaffold(topBar = {}) {
 
