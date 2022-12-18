@@ -89,7 +89,7 @@ fun CreateCompanyJobScreen(userViewModel: UserViewModel, bottomNavController: Na
                             title = title.text,
                             description = jobDesc.text,
                             companyUid = userViewModel.uid,
-                            companyName = userViewModel.name!!,
+                            companyName = userViewModel.name,
                             skillsRequired = skills,
                             jobType = jobType.text,
                             location = location.text,

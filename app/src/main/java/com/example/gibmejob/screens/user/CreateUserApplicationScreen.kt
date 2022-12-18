@@ -20,7 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +49,9 @@ fun CreateUserApplicationScreen(
         var phoneNumber by remember {
             mutableStateOf(TextFieldValue(""))
         }
+        userViewModel.getJobByJobId(jobId)
+        val user by userViewModel.user.observeAsState()
+        val job by userViewModel.job.collectAsState()
         val context = LocalContext.current
         Scaffold(
             topBar = {
@@ -69,7 +74,12 @@ fun CreateUserApplicationScreen(
                 ExtendedFloatingActionButton(onClick = {
                     val jobApplication = JobApplication(
                         email = email.text,
-                        phone = phoneNumber.text
+                        phone = phoneNumber.text,
+                        job = job.first().title,
+                        userId = userViewModel.uid,
+                        companyId = job.first().companyUid,
+                        userName = userViewModel.name,
+                        skills = user?.skills ?: listOf()
                     )
                     userViewModel.addApplication(jobApplication){
                         Toast.makeText(context, "Job Application posted", Toast.LENGTH_SHORT)
@@ -89,7 +99,8 @@ fun CreateUserApplicationScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                OutlinedTextField(modifier = Modifier.fillMaxWidth()
+                OutlinedTextField(modifier = Modifier
+                    .fillMaxWidth()
                     .padding(10.dp),
                     value = email,
                     label = {
@@ -103,7 +114,8 @@ fun CreateUserApplicationScreen(
                             contentDescription = "emailIcon"
                         )
                     })
-                OutlinedTextField(modifier = Modifier.fillMaxWidth()
+                OutlinedTextField(modifier = Modifier
+                    .fillMaxWidth()
                     .padding(10.dp),
                     value = phoneNumber,
                     label = {
