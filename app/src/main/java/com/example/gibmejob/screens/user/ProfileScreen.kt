@@ -25,7 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(user: User?, company: Company?, navController: NavController) {
+fun ProfileScreen(user: User?, company: Company?, navController: NavController, navControllerSec: NavController) {
     val auth = FirebaseAuth.getInstance()
     val navControllerBackStackEntry by navController.currentBackStackEntryAsState()
     var dialogOpen by remember {
@@ -51,7 +51,7 @@ fun ProfileScreen(user: User?, company: Company?, navController: NavController) 
                         Button(onClick = {
                             auth.signOut()
                             dialogOpen = false
-                            navController.navigate(Routes.LoginOptionScreen) {
+                            navControllerSec.navigate(Routes.LoginOptionScreen) {
                                 popUpTo(navControllerBackStackEntry!!.destination.route!!) {
                                     inclusive = true
                                 }
@@ -99,5 +99,5 @@ fun ProfileScreen(user: User?, company: Company?, navController: NavController) 
 @Preview(showBackground = true)
 @Composable
 private fun ProfileScreenPreview() {
-    ProfileScreen(user = User("idk","abc@gmail.com","elo"), company = null, navController = rememberNavController())
+    ProfileScreen(user = User("idk","abc@gmail.com","elo"), company = null, navController = rememberNavController(), rememberNavController())
 }

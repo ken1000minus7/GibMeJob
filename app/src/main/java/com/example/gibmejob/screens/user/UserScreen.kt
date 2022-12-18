@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,7 +23,8 @@ import com.example.gibmejob.model.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserScreen() {
+fun UserScreen(navControllerSec: NavHostController) {
+    //navControllerSec shall be used when we need to go back to login screen
     val bottomNavController = rememberNavController()
     val sharedPreferences = LocalContext.current.getSharedPreferences("GibMeJob", Context.MODE_PRIVATE)
     val entity = sharedPreferences.getString("type", "sadge")!!
@@ -56,7 +58,7 @@ fun UserScreen() {
                 UserApplicationsScreen(bottomNavController)
             }
             composable(Routes.ProfileScreen) {
-                ProfileScreen(user, company, bottomNavController )
+                ProfileScreen(user, company, bottomNavController, navControllerSec )
             }
             composable(Routes.CurrentJobs) {
                 CompanyJobsScreen(bottomNavController, userViewModel)
@@ -98,5 +100,5 @@ fun UserScreen() {
 @Composable
 @Preview(showBackground = true)
 private fun UserScreenPreview() {
-    UserScreen()
+    UserScreen(rememberNavController())
 }

@@ -57,7 +57,7 @@ fun GibMeJobApp() {
             RegisterScreen(navController)
         }
         composable(Routes.UserScreen) {
-            UserScreen()
+            UserScreen(navController)
         }
     }
 }

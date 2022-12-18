@@ -1,6 +1,5 @@
 package com.example.gibmejob.screens.user
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -118,7 +117,6 @@ class UserViewModel: ViewModel() {
                 .addOnCompleteListener {
                     if(it.isSuccessful) {
                         jobs.value = (it.result.toObjects(Job::class.java))
-                        Log.d("wtf",it.result.toObjects(Job::class.java).toString())
                     }
                     else {
                         it.exception?.printStackTrace()

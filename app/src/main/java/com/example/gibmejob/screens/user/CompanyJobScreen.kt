@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -51,7 +52,8 @@ fun CompanyJobScreen(
                 Column(
                     verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(10.dp),
                 ) {
                     Text(
                         text = jobRes.status,
@@ -71,10 +73,16 @@ fun CompanyJobScreen(
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
                         modifier = Modifier
-                            .height(200.dp)
+                            .height(50.dp)
                     ) {
                         items(jobRes.skillsRequired) {
                             Chip(title = it)
+                        }
+                    }
+                    Text(text = "Applicants")
+                    LazyRow(modifier = Modifier.height(300.dp)){
+                        items(jobRes.applicants){
+                            Text(it.name)
                         }
                     }
                 }
