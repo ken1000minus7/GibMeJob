@@ -1,5 +1,6 @@
 package com.example.gibmejob.screens.user
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,10 +24,17 @@ class UserViewModel: ViewModel() {
     val user: MutableLiveData<User?> = MutableLiveData(null)
     val company: MutableLiveData<Company?> = MutableLiveData(null)
     val jobs: MutableStateFlow<MutableList<Job>> = MutableStateFlow(mutableListOf())
-    val jobApplications: MutableLiveData<MutableList<JobApplication>> = MutableLiveData(mutableListOf())
+    val jobApplications: MutableLiveData<MutableList<JobApplication>> =
+        MutableLiveData(mutableListOf())
     val jobRecommendations: MutableLiveData<MutableList<Job>> = MutableLiveData(mutableListOf())
     val userRecommendations: MutableLiveData<MutableList<User>> = MutableLiveData(mutableListOf())
     val job: MutableStateFlow<MutableList<Job>> = MutableStateFlow(mutableListOf())
+
+    //Search functionalities
+    var isSearching = mutableStateOf(false)
+    var isSearchStarted = true
+    var cachedJobResults = listOf<Job>()
+
     val uid
         get() = auth.uid!!
     val name
@@ -38,37 +46,36 @@ class UserViewModel: ViewModel() {
             db.collection("Users")
                 .document(auth.uid!!)
                 .addSnapshotListener { value, error ->
-                    if(value?.exists() == true) {
+                    if (value?.exists() == true) {
                         user.postValue(value.toObject(User::class.java))
                         getJobRecommendations()
-                    }
-                    else {
-                        error?.printStackTrace()
-                    }
-                }
-        }
-    }
-    fun getCompany() {
-        viewModelScope.launch {
-            db.collection(Constants.Users)
-                .document(auth.uid!!)
-                .addSnapshotListener { value, error ->
-                    if(value?.exists() == true) {
-                        company.postValue(value.toObject(Company::class.java))
-                    }
-                    else {
+                    } else {
                         error?.printStackTrace()
                     }
                 }
         }
     }
 
-    fun addJob(job: Job, onComplete:  () -> Unit) {
+    fun getCompany() {
+        viewModelScope.launch {
+            db.collection(Constants.Users)
+                .document(auth.uid!!)
+                .addSnapshotListener { value, error ->
+                    if (value?.exists() == true) {
+                        company.postValue(value.toObject(Company::class.java))
+                    } else {
+                        error?.printStackTrace()
+                    }
+                }
+        }
+    }
+
+    fun addJob(job: Job, onComplete: () -> Unit) {
         viewModelScope.launch {
             db.collection(Constants.Jobs)
                 .add(job)
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         job.jobId = it.result.id
                         db.collection(Constants.Jobs)
                             .document(job.jobId)
@@ -79,11 +86,11 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    fun updateJobApplicantsCount(jobId: String){
+    fun updateJobApplicantsCount(jobId: String) {
         viewModelScope.launch {
             db.collection(Constants.Jobs)
                 .document(jobId)
-                .update("totalApplicants",FieldValue.increment(1))
+                .update("totalApplicants", FieldValue.increment(1))
                 .addOnSuccessListener { }
                 .addOnFailureListener { }
         }
@@ -94,7 +101,7 @@ class UserViewModel: ViewModel() {
             db.collection(Constants.JobApplications)
                 .add(jobApplication)
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         jobApplication.applicationId = it.result.id
                         db.collection(Constants.Jobs)
                             .document(jobApplication.applicationId)
@@ -110,10 +117,9 @@ class UserViewModel: ViewModel() {
             db.collection(Constants.Jobs)
                 .get()
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         jobs.value = (it.result.toObjects(Job::class.java))
-                    }
-                    else {
+                    } else {
                         it.exception?.printStackTrace()
                     }
                 }
@@ -123,13 +129,12 @@ class UserViewModel: ViewModel() {
     fun getCompanyJobs(companyId: String) {
         viewModelScope.launch {
             db.collection(Constants.Jobs)
-                .whereEqualTo("companyUid",companyId)
+                .whereEqualTo("companyUid", companyId)
                 .get()
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         jobs.value = (it.result.toObjects(Job::class.java))
-                    }
-                    else {
+                    } else {
                         it.exception?.printStackTrace()
                     }
                 }
@@ -139,13 +144,12 @@ class UserViewModel: ViewModel() {
     fun getUserJobApplications(userId: String) {
         viewModelScope.launch {
             db.collection(Constants.JobApplications)
-                .whereEqualTo("userId",userId)
+                .whereEqualTo("userId", userId)
                 .get()
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         jobApplications.postValue(it.result.toObjects(JobApplication::class.java))
-                    }
-                    else {
+                    } else {
                         it.exception?.printStackTrace()
                     }
                 }
@@ -155,26 +159,25 @@ class UserViewModel: ViewModel() {
     fun getJobApplications(jobId: String) {
         viewModelScope.launch {
             db.collection(Constants.JobApplications)
-                .whereEqualTo("jobId",jobId)
+                .whereEqualTo("jobId", jobId)
                 .get()
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         jobApplications.postValue(it.result.toObjects(JobApplication::class.java))
-                    }
-                    else {
+                    } else {
                         it.exception?.printStackTrace()
                     }
                 }
         }
     }
 
-    fun getJobByJobId(jobId: String){
+    fun getJobByJobId(jobId: String) {
         viewModelScope.launch {
             db.collection(Constants.Jobs)
-                .whereEqualTo("jobId",jobId)
+                .whereEqualTo("jobId", jobId)
                 .get()
                 .addOnCompleteListener {
-                    if(it.isSuccessful){
+                    if (it.isSuccessful) {
                         job.value = it.result.toObjects(Job::class.java)
                     }
                 }
@@ -217,30 +220,31 @@ class UserViewModel: ViewModel() {
             db.collection(Constants.Jobs)
                 .get()
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         val jobs = it.result.toObjects(Job::class.java)
 
                         val skills = mutableListOf<String>()
-                        user.value?.skills?.forEach { skill->
+                        user.value?.skills?.forEach { skill ->
                             skills.addAll(skill.lowercase().split(" "))
                         }
 
                         val scoreMap = mutableMapOf<String, Double>()
 
-                        val jobDocuments = jobs.map { job->
-                            val tokens = "${job.title} ${job.description}".lowercase().split(" ").toMutableList()
-                            tokens.addAll(job.skillsRequired.map{skill-> skill.lowercase()})
+                        val jobDocuments = jobs.map { job ->
+                            val tokens = "${job.title} ${job.description}".lowercase().split(" ")
+                                .toMutableList()
+                            tokens.addAll(job.skillsRequired.map { skill -> skill.lowercase() })
                             tokens
                         }
 
-                        jobs.forEachIndexed { index, job->
+                        jobs.forEachIndexed { index, job ->
                             val document = jobDocuments[index]
                             var numerator = 0.0
-                            skills.forEach { skill->
+                            skills.forEach { skill ->
                                 numerator += tfIdf(skill, document, jobDocuments)
                             }
                             var denominator = 0.0
-                            document.forEach { token->
+                            document.forEach { token ->
                                 val tokenTfIdf = tfIdf(token, document, jobDocuments)
                                 denominator += tokenTfIdf * tokenTfIdf
                             }
@@ -249,13 +253,12 @@ class UserViewModel: ViewModel() {
                             scoreMap[job.jobId] = score
                         }
 
-                        jobs.sortByDescending { job->
+                        jobs.sortByDescending { job ->
                             scoreMap[job.jobId]
                         }
                         val recommendations = jobs.subList(0, min(5, jobs.size))
                         jobRecommendations.postValue(recommendations)
-                    }
-                    else {
+                    } else {
                         it.exception?.printStackTrace()
                     }
                 }
@@ -268,14 +271,15 @@ class UserViewModel: ViewModel() {
                 .whereEqualTo("type", "User")
                 .get()
                 .addOnCompleteListener {
-                    if(it.isSuccessful) {
+                    if (it.isSuccessful) {
                         val users = it.result.toObjects(User::class.java)
-                        val tokens = "${job.title} ${job.description}".lowercase().split(" ").toMutableList()
-                        tokens.addAll(job.skillsRequired.map{skill-> skill.lowercase()})
+                        val tokens =
+                            "${job.title} ${job.description}".lowercase().split(" ").toMutableList()
+                        tokens.addAll(job.skillsRequired.map { skill -> skill.lowercase() })
 
-                        val userDocuments = users.map { user->
+                        val userDocuments = users.map { user ->
                             val skills = mutableListOf<String>()
-                            user.skills.forEach { skill->
+                            user.skills.forEach { skill ->
                                 skills.addAll(skill.lowercase().split(" "))
                             }
                             skills
@@ -283,14 +287,14 @@ class UserViewModel: ViewModel() {
 
                         val scoreMap = mutableMapOf<String, Double>()
 
-                        users.forEachIndexed { index, user->
+                        users.forEachIndexed { index, user ->
                             val document = userDocuments[index]
                             var numerator = 0.0
-                            tokens.forEach { token->
+                            tokens.forEach { token ->
                                 numerator += tfIdf(token, document, userDocuments)
                             }
                             var denominator = 0.0
-                            document.forEach { skill->
+                            document.forEach { skill ->
                                 val skillTfIdf = tfIdf(skill, document, userDocuments)
                                 denominator += skillTfIdf * skillTfIdf
                             }
@@ -299,14 +303,13 @@ class UserViewModel: ViewModel() {
                             scoreMap[user.uid] = score
                         }
 
-                        users.sortByDescending { user->
+                        users.sortByDescending { user ->
                             scoreMap[user.uid]
                         }
 
                         val recommendations = users.subList(0, min(5, users.size))
                         userRecommendations.postValue(recommendations)
-                    }
-                    else {
+                    } else {
                         it.exception?.printStackTrace()
                     }
                 }
@@ -319,7 +322,7 @@ class UserViewModel: ViewModel() {
 
     private fun termFrequency(term: String, document: List<String>): Double {
         var frequency = 0.0
-        document.forEach { token->
+        document.forEach { token ->
             frequency += findSimilarity(token, term)
         }
         return log10(frequency + 1)
@@ -327,9 +330,9 @@ class UserViewModel: ViewModel() {
 
     private fun inverseDocumentFrequency(term: String, documents: List<List<String>>): Double {
         var frequency = 0.0
-        documents.forEach { document->
+        documents.forEach { document ->
             var membership = 0.0
-            document.forEach { token->
+            document.forEach { token ->
                 membership = max(membership, findSimilarity(token, term))
             }
             frequency += membership
@@ -351,8 +354,10 @@ class UserViewModel: ViewModel() {
         for (i in 1..m) {
             for (j in 1..n) {
                 cost = if (x[i - 1] == y[j - 1]) 0 else 1
-                dp[i][j] = min(min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
-                    dp[i - 1][j - 1] + cost)
+                dp[i][j] = min(
+                    min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
+                    dp[i - 1][j - 1] + cost
+                )
             }
         }
         return dp[m][n]
@@ -365,5 +370,26 @@ class UserViewModel: ViewModel() {
         } else 1.0
     }
 
-
+    fun searchJobByUser(jobQuery: String) {
+        val listToSearch = if (isSearchStarted) {
+            jobs.value
+        } else cachedJobResults
+        viewModelScope.launch {
+            if (jobQuery.isEmpty()) {
+                jobs.value = cachedJobResults.toMutableList()
+                isSearching.value = false
+                isSearchStarted = true
+                return@launch
+            }
+            val results = listToSearch.filter {
+                it.title.contains(jobQuery.trim(), ignoreCase = true)
+            }
+            if (isSearchStarted) {
+                cachedJobResults = jobs.value
+                isSearchStarted = false
+            }
+            jobs.value = results.toMutableList()
+            isSearching.value = true
+        }
+    }
 }

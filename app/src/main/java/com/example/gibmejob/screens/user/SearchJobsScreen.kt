@@ -31,7 +31,7 @@ fun SearchJobsScreen(navHostController: NavHostController,
     viewModel.getAllJobs()
     val jobs by viewModel.jobs.collectAsState()
     Column(modifier = Modifier.fillMaxSize()) {
-        SearchBox()
+        SearchBox(viewModel)
         LazyColumn{
             items(jobs){
                 JobCard(
@@ -45,6 +45,8 @@ fun SearchJobsScreen(navHostController: NavHostController,
     }
 
 }
+
+
 
 @Composable
 fun JobCard(navHostController: NavHostController,
@@ -69,7 +71,7 @@ fun JobCard(navHostController: NavHostController,
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun SearchBox() {
+fun SearchBox(viewModel: UserViewModel) {
     var query by remember {
         mutableStateOf("")
     }
@@ -80,6 +82,7 @@ fun SearchBox() {
             value = query,
             onValueChange = {
                 query = it
+                viewModel.searchJobByUser(it)
             },
             modifier = Modifier
                 .fillMaxWidth()
