@@ -8,13 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.gibmejob.model.Routes
 import com.example.gibmejob.screens.*
 import com.example.gibmejob.screens.login.LoginOptionScreen
@@ -60,7 +57,7 @@ fun GibMeJobApp() {
             RegisterScreen(navController)
         }
         composable(Routes.UserScreen) {
-            UserScreen(navController)
+            UserScreen()
         }
     }
 }
