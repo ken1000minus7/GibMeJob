@@ -44,7 +44,7 @@ fun EditAboutDialog(about: String, onDismissRequest: () -> Unit) {
 
                 Button(modifier = Modifier.padding(10.dp), onClick = {
                     if(newAbout.isEmpty()) {
-                        Toast.makeText(context, "Skill can't be empty", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "About can't be empty", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
                     userViewModel.updateAbout(newAbout) {
