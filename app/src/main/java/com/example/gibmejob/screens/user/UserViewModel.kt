@@ -25,9 +25,8 @@ class UserViewModel: ViewModel() {
         get() = auth.uid!!
     val name
         get() = auth.currentUser?.displayName
-    init {
 
-    }
+
     fun getUser() {
         viewModelScope.launch {
             db.collection("Users")
@@ -163,6 +162,37 @@ class UserViewModel: ViewModel() {
                         job.value = it.result.toObjects(Job::class.java)
                     }
                 }
+        }
+    }
+
+    fun addSkill(skill: String, skills: List<String>, onComplete: (Task<Void>) -> Unit) {
+        viewModelScope.launch {
+            val skillList = skills.toMutableList()
+            skillList.add(skill)
+            db.collection(Constants.Users)
+                .document(auth.uid!!)
+                .update(mapOf("skills" to skillList))
+                .addOnCompleteListener(onComplete)
+        }
+    }
+
+    fun deleteSkill(i: Int, skills: List<String>, onComplete: (Task<Void>) -> Unit) {
+        viewModelScope.launch {
+            val skillList = skills.toMutableList()
+            skillList.removeAt(i)
+            db.collection(Constants.Users)
+                .document(auth.uid!!)
+                .update(mapOf("skills" to skillList))
+                .addOnCompleteListener(onComplete)
+        }
+    }
+
+    fun updateAbout(about: String, onComplete: (Task<Void>) -> Unit) {
+        viewModelScope.launch {
+            db.collection(Constants.Users)
+                .document(auth.uid!!)
+                .update(mapOf("about" to about))
+                .addOnCompleteListener(onComplete)
         }
     }
 }

@@ -27,7 +27,6 @@ fun Chips(title : String,
           onRemove : ()-> Unit) {
     Box(
         modifier = Modifier
-            .width(IntrinsicSize.Max)
             .padding(10.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(color = MaterialTheme.colorScheme.secondary)
@@ -55,7 +54,6 @@ fun Chips(title : String,
 fun Chip(title: String) {
     Box(
         modifier = Modifier
-            .width(IntrinsicSize.Max)
             .padding(10.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(color = MaterialTheme.colorScheme.secondary)
@@ -63,6 +61,7 @@ fun Chip(title: String) {
                 border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(20.dp)
             )
+            .padding(5.dp)
     ) {
         Text(text = title)
     }

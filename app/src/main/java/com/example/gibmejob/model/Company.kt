@@ -5,5 +5,6 @@ data class Company(
     val email: String = "",
     val name: String = "",
     var photoUrl: String? = null,
-    val type: String = "Company"
+    val type: String = "Company",
+    var about: String = ""
 )

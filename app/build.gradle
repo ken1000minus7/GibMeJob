@@ -92,4 +92,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.gms:google-services:4.3.14'
+
+    // stuff
+    implementation "com.google.accompanist:accompanist-flowlayout:0.10.0"
 }
