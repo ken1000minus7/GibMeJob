@@ -28,7 +28,7 @@ class UserViewModel: ViewModel() {
         MutableLiveData(mutableListOf())
     val jobRecommendations: MutableLiveData<MutableList<Job>> = MutableLiveData(mutableListOf())
     val userRecommendations: MutableLiveData<MutableList<User>> = MutableLiveData(mutableListOf())
-    val job: MutableStateFlow<MutableList<Job>> = MutableStateFlow(mutableListOf())
+    val job: MutableStateFlow<Job?> = MutableStateFlow(null)
 
     //Search functionalities
     var isSearching = mutableStateOf(false)
@@ -178,7 +178,7 @@ class UserViewModel: ViewModel() {
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        job.value = it.result.toObjects(Job::class.java)
+                        job.value = it.result.toObjects(Job::class.java).first()
                     }
                 }
         }

@@ -75,9 +75,9 @@ fun CreateUserApplicationScreen(
                     val jobApplication = JobApplication(
                         email = email.text,
                         phone = phoneNumber.text,
-                        job = job.first().title,
+                        job = job?.title ?: "",
                         userId = userViewModel.uid,
-                        companyId = job.first().companyUid,
+                        companyId = job?.companyUid ?: "",
                         userName = userViewModel.name,
                         skills = user?.skills ?: listOf()
                     )
