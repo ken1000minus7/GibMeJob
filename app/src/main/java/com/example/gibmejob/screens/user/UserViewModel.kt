@@ -219,20 +219,21 @@ class UserViewModel: ViewModel() {
 
                         val scoreMap = mutableMapOf<String, Double>()
 
-                        val jobDescriptions = jobs.map { job->
-                            "${job.title} ${job.description}".lowercase()
+                        val jobDocuments = jobs.map { job->
+                            val tokens = "${job.title} ${job.description}".lowercase().split(" ").toMutableList()
+                            tokens.addAll(job.skillsRequired.map{skill-> skill.lowercase()})
+                            tokens
                         }
 
-                        jobs.forEach { job->
-                            val document = "${job.title} ${job.description}".lowercase()
-                            val tokens = document.split(" ")
+                        jobs.forEachIndexed { index, job->
+                            val document = jobDocuments[index]
                             var numerator = 0.0
                             skills.forEach { skill->
-                                numerator += tfIdf(skill, document, jobDescriptions)
+                                numerator += tfIdf(skill, document, jobDocuments)
                             }
                             var denominator = 0.0
-                            tokens.forEach { token->
-                                val tokenTfIdf = tfIdf(token, document, jobDescriptions)
+                            document.forEach { token->
+                                val tokenTfIdf = tfIdf(token, document, jobDocuments)
                                 denominator += tokenTfIdf * tokenTfIdf
                             }
                             denominator = sqrt(denominator)
@@ -257,23 +258,23 @@ class UserViewModel: ViewModel() {
 
     }
 
-    private fun tfIdf(term: String, document: String, documents: List<String>): Double {
+    private fun tfIdf(term: String, document: List<String>, documents: List<List<String>>): Double {
         return termFrequency(term, document) * inverseDocumentFrequency(term, documents)
     }
 
-    private fun termFrequency(term: String, document: String): Double {
+    private fun termFrequency(term: String, document: List<String>): Double {
         var frequency = 0.0
-        document.split(" ").forEach { token->
+        document.forEach { token->
             frequency += findSimilarity(token, term)
         }
         return log10(frequency + 1)
     }
 
-    private fun inverseDocumentFrequency(term: String, documents: List<String>): Double {
+    private fun inverseDocumentFrequency(term: String, documents: List<List<String>>): Double {
         var frequency = 0.0
         documents.forEach { document->
             var membership = 0.0
-            document.split(" ").forEach { token->
+            document.forEach { token->
                 membership = max(membership, findSimilarity(token, term))
             }
             frequency += membership
