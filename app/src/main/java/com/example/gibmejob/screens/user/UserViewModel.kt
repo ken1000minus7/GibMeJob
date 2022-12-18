@@ -7,6 +7,7 @@ import com.example.gibmejob.model.*
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,7 +79,17 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    fun addApplication(jobApplication: JobApplication, onComplete: (Task<DocumentReference>) -> Unit) {
+    fun updateJobApplicantsCount(jobId: String){
+        viewModelScope.launch {
+            db.collection(Constants.Jobs)
+                .document(jobId)
+                .update("totalApplicants",FieldValue.increment(1))
+                .addOnSuccessListener { }
+                .addOnFailureListener { }
+        }
+    }
+
+    fun addApplication(jobApplication: JobApplication, onComplete: () -> Unit) {
         viewModelScope.launch {
             db.collection(Constants.JobApplications)
                 .add(jobApplication)
@@ -89,7 +100,7 @@ class UserViewModel: ViewModel() {
                             .document(jobApplication.applicationId)
                             .set(jobApplication, SetOptions.merge())
                     }
-                    onComplete(it)
+                    onComplete()
                 }
         }
     }

@@ -66,7 +66,7 @@ fun UserJobScreen(
                 Text(text = "Role: ${job.jobType}", fontSize = 20.sp)
                 Text(text = "Job Description:",fontSize = 20.sp)
                 Text(text = job.description)
-                Button(onClick = { bottomNavController.navigate(Routes.CreateUserApplicationScreen) }) {
+                Button(onClick = { bottomNavController.navigate("${Routes.CreateUserApplicationScreen}/$jobId") }) {
                     Text(text = "Apply")
                 }
         }

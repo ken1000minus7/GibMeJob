@@ -90,8 +90,13 @@ fun UserScreen(navControllerSec: NavHostController) {
                 }
             }
             composable(
-                route = Routes.CreateUserApplicationScreen){
-                CreateUserApplicationScreen(bottomNavController)
+                route = "${Routes.CreateUserApplicationScreen}/{jobId}",
+                arguments = listOf(navArgument("jobId"){
+                    type = NavType.StringType
+                })){backStackEntry ->
+                backStackEntry.arguments?.getString("jobId")?.let {jobId ->
+                    CreateUserApplicationScreen(bottomNavController, userViewModel, jobId)
+                }
             }
         }
     }
