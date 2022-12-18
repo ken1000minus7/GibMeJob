@@ -12,5 +12,6 @@ data class Job(
     var companyName: String = "",
     var skillsRequired : List<String> = listOf(),
     var totalApplicants : Int = 0,
-    var status : String = "Open"
+    var status : String = "Open",
+    var applicants: List<User> = listOf()
 ) : Serializable
