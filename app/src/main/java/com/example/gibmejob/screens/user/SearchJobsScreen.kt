@@ -15,10 +15,12 @@ import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,19 +32,44 @@ import com.example.gibmejob.model.Job
 fun SearchJobsScreen(navHostController: NavHostController,
     viewModel: UserViewModel) {
     viewModel.getAllJobs()
+    viewModel.getJobRecommendations()
     val jobs by viewModel.jobs.collectAsState()
+    val jobRecommendations by viewModel.jobRecommendations.observeAsState()
+    
+    val query = remember {
+        mutableStateOf("")
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
-        SearchBox(viewModel)
-        LazyColumn{
-            items(jobs){
-                JobCard(
-                    navHostController = navHostController,
-                    jobName = it.title,
-                    companyName = "Company ${it.companyName}",
-                    jobId = it.jobId
-                )
+        SearchBox(query, viewModel)
+        if(query.value.isNotEmpty()) {
+            LazyColumn {
+                items(jobs.filter {
+                    it.description.lowercase().contains(query.value.lowercase()) || it.title.lowercase().contains(query.value.lowercase()) || it.companyName.lowercase().contains(query.value.lowercase()) || it.skillsRequired.map { skill-> skill.lowercase() }.contains(query.value)
+                }){
+                    JobCard(
+                        navHostController = navHostController,
+                        jobName = it.title,
+                        companyName = "Company ${it.companyName}",
+                        jobId = it.jobId
+                    )
+                }
             }
         }
+        else {
+            Text(text = "Recommended jobs for you", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(10.dp))
+            LazyColumn {
+                items(jobRecommendations ?: mutableListOf()) {
+                    JobCard(
+                        navHostController = navHostController,
+                        jobName = it.title,
+                        companyName = it.companyName,
+                        jobId = it.jobId
+                    )
+                }
+            }
+        }
+        
     }
 
 }
@@ -72,17 +99,14 @@ fun JobCard(navHostController: NavHostController,
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun SearchBox(viewModel: UserViewModel) {
-    var query by remember {
-        mutableStateOf("")
-    }
+fun SearchBox(query: MutableState<String>, viewModel: UserViewModel) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         OutlinedTextField(
-            value = query,
+            value = query.value,
             onValueChange = {
-                query = it
+                query.value = it
                 viewModel.searchJobByUser(it)
             },
             modifier = Modifier

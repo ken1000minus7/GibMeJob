@@ -88,7 +88,7 @@ class UserViewModel: ViewModel() {
 
     fun updateJobApplicantsCount(jobId: String) {
         viewModelScope.launch {
-            db.collection(Constants.Jobs)
+            db.collection(Constants.JobApplications)
                 .document(jobId)
                 .update("totalApplicants", FieldValue.increment(1))
                 .addOnSuccessListener { }
@@ -103,7 +103,7 @@ class UserViewModel: ViewModel() {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         jobApplication.applicationId = it.result.id
-                        db.collection(Constants.Jobs)
+                        db.collection(Constants.JobApplications)
                             .document(jobApplication.applicationId)
                             .set(jobApplication, SetOptions.merge())
                     }
@@ -215,7 +215,7 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    private fun getJobRecommendations() {
+    fun getJobRecommendations() {
         viewModelScope.launch {
             db.collection(Constants.Jobs)
                 .get()
@@ -265,7 +265,7 @@ class UserViewModel: ViewModel() {
         }
     }
 
-    private fun getUserRecommendations(job: Job) {
+    fun getUserRecommendations(job: Job) {
         viewModelScope.launch {
             db.collection(Constants.Users)
                 .whereEqualTo("type", "User")
