@@ -52,7 +52,7 @@ fun UserScreen(navControllerSec: NavHostController) {
             modifier = Modifier.padding(it)
         ) {
             composable(Routes.SearchJobsScreen) {
-                SearchJobsScreen(navHostController = bottomNavController)
+                SearchJobsScreen(navHostController = bottomNavController, userViewModel)
             }
             composable(Routes.UserApplicationsScreen) {
                 UserApplicationsScreen(bottomNavController)
@@ -86,7 +86,7 @@ fun UserScreen(navControllerSec: NavHostController) {
                     type = NavType.StringType
                 })) { backStackEntry ->
                 backStackEntry.arguments?.getString("jobId")?.let { jobId ->
-                    UserJobScreen(jobId = jobId, bottomNavController)
+                    UserJobScreen(jobId = jobId, bottomNavController, userViewModel)
                 }
             }
             composable(

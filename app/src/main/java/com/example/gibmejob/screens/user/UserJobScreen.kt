@@ -17,6 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,10 +33,15 @@ import com.example.gibmejob.model.Routes
 @Composable
 fun UserJobScreen(
     jobId: String,
-    bottomNavController: NavController
+    bottomNavController: NavController,
+    userViewModel: UserViewModel
 ) {
+    val jobs by userViewModel.jobs.collectAsState()
+    val job = jobs.first {
+        it.jobId == jobId
+    }
     Scaffold(topBar = {
-        TopAppBar(title = { Text(text = "Job $jobId")},
+        TopAppBar(title = { Text(text = job.title)},
             navigationIcon = {
                 Icon(Icons.Rounded.ArrowBack,
                     contentDescription = "",
@@ -48,7 +55,6 @@ fun UserJobScreen(
     }) {
         Column(modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp)
             .padding(it)
             .padding(20.dp)
             .clip(RoundedCornerShape(10.dp))
@@ -56,11 +62,10 @@ fun UserJobScreen(
                 Color.Gray
             )
             .padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "Company #$jobId", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Role: Role $jobId", fontSize = 20.sp)
+                Text(text = job.companyName, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Role: ${job.jobType}", fontSize = 20.sp)
                 Text(text = "Job Description:",fontSize = 20.sp)
-                Text(text = "lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..lorem..ipsum..")
-                Text(text = "")
+                Text(text = job.description)
                 Button(onClick = { bottomNavController.navigate(Routes.CreateUserApplicationScreen) }) {
                     Text(text = "Apply")
                 }

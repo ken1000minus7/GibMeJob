@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -21,21 +22,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun SearchJobsScreen(navHostController: NavHostController) {
+fun SearchJobsScreen(navHostController: NavHostController,
+    viewModel: UserViewModel) {
+    viewModel.getAllJobs()
+    val jobs by viewModel.jobs.collectAsState()
     Column(modifier = Modifier.fillMaxSize()) {
         SearchBox()
         LazyColumn{
-            items(5){
+            items(jobs){
                 JobCard(
                     navHostController = navHostController,
-                    jobName = "Job ${it + 1}",
-                    companyName = "Company ${it+1}",
-                    jobId = (it+1).toString()
+                    jobName = it.title,
+                    companyName = "Company ${it.companyName}",
+                    jobId = it.jobId
                 )
             }
         }
@@ -96,5 +99,5 @@ fun SearchBox() {
 @Preview(showBackground = true)
 @Composable
 fun SearchJobsScreenPreview() {
-    SearchJobsScreen(rememberNavController())
+    SearchJobsScreen(rememberNavController(), UserViewModel())
 }
