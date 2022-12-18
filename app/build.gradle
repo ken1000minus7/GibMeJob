@@ -95,4 +95,5 @@ dependencies {
 
     // stuff
     implementation "com.google.accompanist:accompanist-flowlayout:0.10.0"
+    implementation "com.google.accompanist:accompanist-pager:0.25.1"
 }

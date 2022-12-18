@@ -17,14 +17,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gibmejob.components.Chip
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun CompanyJobScreen(
     jobId: String,
@@ -79,10 +77,32 @@ fun CompanyJobScreen(
                             Chip(title = it)
                         }
                     }
-                    Text(text = "Applicants")
-                    LazyRow(modifier = Modifier.height(300.dp)){
-                        items(jobRes.applicants){
-                            Text(it.name)
+                    val pagerState = rememberPagerState()
+                    TabRow(selectedTabIndex = pagerState.currentPage) {
+                        val scope = rememberCoroutineScope()
+                        Tab(selected = pagerState.currentPage == 0, modifier = Modifier.padding(10.dp), onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(0)
+                            }
+                        }) {
+                            Text(text = "Recommendations")
+                        }
+                        Tab(selected = pagerState.currentPage == 1, modifier = Modifier.padding(10.dp), onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(1)
+                            }
+                        }) {
+                            Text(text = "Applications")
+                        }
+                    }
+                    HorizontalPager(count = 2, state = pagerState, modifier = Modifier.weight(1f)) { page->
+                        when(page) {
+                            0 -> {
+
+                            }
+                            else -> {
+
+                            }
                         }
                     }
                 }
@@ -91,12 +111,14 @@ fun CompanyJobScreen(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun IndividualJobDetails(
     role: String,
     applicants: Int,
     jobDesc: String
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,5 +146,6 @@ fun IndividualJobDetails(
                 Text(text = jobDesc)
             }
         }
+
     }
 }

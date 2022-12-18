@@ -365,9 +365,11 @@ class UserViewModel: ViewModel() {
 
     private fun findSimilarity(x: String, y: String): Double {
         val maxLength = max(x.length, y.length)
-        return if (maxLength > 0) {
+        var similarity = if (maxLength > 0) {
             (maxLength * 1.0 - getLevenshteinDistance(x, y)) / maxLength * 1.0
         } else 1.0
+        if(similarity < 0.5) similarity = 0.0
+        return  similarity
     }
 
     fun searchJobByUser(jobQuery: String) {
