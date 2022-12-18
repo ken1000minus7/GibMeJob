@@ -55,7 +55,7 @@ fun UserScreen(navControllerSec: NavHostController) {
                 SearchJobsScreen(navHostController = bottomNavController, userViewModel)
             }
             composable(Routes.UserApplicationsScreen) {
-                UserApplicationsScreen(bottomNavController)
+                UserApplicationsScreen(bottomNavController, userViewModel)
             }
             composable(Routes.ProfileScreen) {
                 ProfileScreen(user, company, bottomNavController, navControllerSec )

@@ -38,7 +38,7 @@ class UserViewModel: ViewModel() {
     val uid
         get() = auth.uid!!
     val name
-        get() = auth.currentUser?.displayName
+        get() = user.value?.name ?: ""
 
 
     fun getUser() {
